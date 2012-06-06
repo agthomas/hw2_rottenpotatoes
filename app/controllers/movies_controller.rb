@@ -6,10 +6,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @sortby = params[:sortby]
+#debugger
     @all_ratings = Movie.all_ratings
-    if @sortby != nil
-      @selected_ratings = params[:selected_ratings]
+    if params.include?(:commit)
+      session[:selected_ratings]=params[:ratings]
+      @selected_ratings = params[:ratings]
+      @movies = Movie.find(:all, :conditions => { :rating => @selected_ratings.keys})
+    elsif params.include?(:sortby)
+      @sortby = params[:sortby]
+      session[:sortby]=@sortby
+      @selected_ratings = session[:selected_ratings]
       if @selected_ratings == nil
         @movies = Movie.find(:all,:order => @sortby)
       else
@@ -17,9 +23,10 @@ class MoviesController < ApplicationController
         @movies = Movie.where(:rating => @selected_ratings.keys).order(@sortby)
       end
     else
-      @selected_ratings = params[:ratings]
-      if @selected_ratings != nil
-        @movies = Movie.find(:all, :conditions => { :rating => @selected_ratings.keys})
+      if session.include?(:sortby)
+        redirect_to :action => 'index', :sortby => session[:sortby]
+      elsif session.include?(:selected_ratings)
+        redirect_to :action => 'index', :commit =>'Refresh' 
       else
         @movies = Movie.all
       end
