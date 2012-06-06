@@ -9,9 +9,16 @@ class MoviesController < ApplicationController
 #debugger
     @all_ratings = Movie.all_ratings
     if params.include?(:commit)
-      session[:selected_ratings]=params[:ratings]
-      @selected_ratings = params[:ratings]
-      @movies = Movie.find(:all, :conditions => { :rating => @selected_ratings.keys})
+      if params.include?(:ratings)
+        session[:selected_ratings]=params[:ratings]
+        @selected_ratings = params[:ratings]
+        @movies = Movie.find(:all, :conditions => { :rating => @selected_ratings.keys})
+      else
+        if session.include?(:selected_ratings)
+          session.delete(:selected_ratings)
+        end
+        @movies = Movie.all
+      end
     elsif params.include?(:sortby)
       @sortby = params[:sortby]
       session[:sortby]=@sortby
