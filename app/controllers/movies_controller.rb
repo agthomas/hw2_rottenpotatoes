@@ -33,7 +33,7 @@ class MoviesController < ApplicationController
       if session.include?(:sortby)
         redirect_to :action => 'index', :sortby => session[:sortby]
       elsif session.include?(:selected_ratings)
-        redirect_to :action => 'index', :commit =>'Refresh' 
+        redirect_to :action => 'index', :commit =>'Refresh', :selected_ratings => session[:selected_ratings] 
       else
         @movies = Movie.all
       end
