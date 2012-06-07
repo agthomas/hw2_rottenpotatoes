@@ -11,6 +11,7 @@ class MoviesController < ApplicationController
     if params.include?(:commit)
       if params.include?(:ratings)
         session[:selected_ratings]=params[:ratings]
+        session[:ratings]=params[:ratings]
         @selected_ratings = params[:ratings]
         @movies = Movie.find(:all, :conditions => { :rating => @selected_ratings.keys})
       else
@@ -33,7 +34,7 @@ class MoviesController < ApplicationController
       if session.include?(:sortby)
         redirect_to :action => 'index', :sortby => session[:sortby]
       elsif session.include?(:selected_ratings)
-        redirect_to :action => 'index', :commit =>'Refresh', :selected_ratings => session[:selected_ratings] 
+        redirect_to :action => 'index', :commit =>'Refresh', :ratings => session[:ratings] 
       else
         @movies = Movie.all
       end
